@@ -12,13 +12,19 @@ $(document).ready(function() {
   var $lastname = $('#lastname');
   var $email = $('#email');
 
+  var contactTemplate = $('#contact-template').html();
+
+  function addContact(contact) {
+    $contacts.append(Mustache.render(contactTemplate, contact));
+  }
+
   $.ajax({
     method: 'GET',
     dataType: 'json',
     url: '/api/contacts',
     success: function(contacts) {
       $.each(contacts, function(i, contact) {
-        $contacts.append('<li>'+ contact.firstname + ' ' + contact.lastname + ',' + contact.email + '</li>');
+        addContact(contact);
       });
     }
   });
@@ -36,12 +42,12 @@ $(document).ready(function() {
       data: contact,
       url: 'api/contacts',
       success: function(newContact) {
-        $contacts.append('<li>'+ newContact.firstname + ' ' + newContact.lastname + ',' + newContact.email + '</li>');
+        addContact(newContact);
       }
     });
   });
 
-  $('#remove-contact').on('click',function() {
+  $contacts.on('click','.remove',function() {
     var contact = {
       firstname: $firstname.val(),
       lastname: $lastname.val(),
@@ -54,14 +60,52 @@ $(document).ready(function() {
       method: 'DELETE',
       dataType: 'json',
       data: contact,
-      url: 'api/contacts',
+      url: 'api/contacts/'+ $(this).attr('contact-id'),
       success: function() {
-        $li.fadeOut(1500, function() {
+        $li.fadeOut(300, function() {
           $(this).remove();
         });
       }
     });
   });
+
+  $contacts.on('click','.editContact',function() {
+
+    var $li = $(this).closest('li');
+
+    $li.find('input.firstname').val($li.find('span.firstname').html() );
+    $li.find('input.lastname').val($li.find('span.lastname').html() );
+    $li.find('input.email').val($li.find('span.email').html() );
+    $li.addClass('edit');  
+  });
+
+  $contacts.on('click','.cancelEdit',function() {
+    $(this).closest('li').removeClass('edit');
+  });
+
+ $contacts.on('click','.saveEdit',function() {
+    var $li = $(this).closest('li');
+
+    var contact = {
+      firstname: $li.find('input.firstname').val(),
+      lastname: $li.find('input.lastname').val(),
+      email: $li.find('input.email').val()
+    }
+
+    $.ajax({
+      method: 'PUT',
+      dataType: 'json',
+      data: contact,
+      url: 'api/contacts/'+ $li.attr('data-id'),
+      success: function(contact) {
+        $li.find('span.firstname').html(contact.firstname);
+        $li.find('span.lastname').html(contact.lastname);
+        $li.find('span.email').html(contact.email);
+      }
+    });
+  });
+
+
 
 
 

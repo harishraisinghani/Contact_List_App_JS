@@ -1,3 +1,18 @@
+<template id="contact-template">
+  <li data-id = "{{id}}">
+    <strong>Name:</strong> 
+    <span class="noedit firstname lastname"> {{firstname}} {{lastname}}</span>
+    <input class="edit firstname lastname"/>
+    <strong>Email:</strong> 
+    <span class="noedit email">{{email}}</span>
+    <input class="edit email"/>
+    <button contact-id = '{{id}}' class='remove'>X</button>
+    <button class="editContact noedit">Edit</button>
+    <button class="saveEdit edit">Save</button>
+    <button class="cancelEdit edit">Cancel</button>
+  </li>
+</template>
+
 <h3>List of all the Contacts in our Database</h3>
 <ul id="contacts">
 </ul>
@@ -7,4 +22,3 @@
 <p>Last Name: <input type="text" id="lastname"></p>
 <p>Email: <input type="text" id="email"></p>
 <button id="add-contact">Add a Contact</button>
-<button id="remove-contact">Remove Contact</button>
